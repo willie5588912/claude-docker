@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     sudo \
     docker.io \
+    nano \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20.x (required for npx and MCP servers)
