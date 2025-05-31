@@ -1,0 +1,32 @@
+# Personal configuration files
+.mcp.json
+claude-home/
+.claude/
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local user data
+.local/
+.config/
+
+# Credentials and tokens
+.credentials.json
+*.token
+*.key
+.env
+
+# Build artifacts
+*.log
+
+# Temporary files
+*.tmp
+*.temp

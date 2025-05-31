@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Get the current working directory
+CURRENT_DIR="$(pwd)"
+
+# Set claude home directory in standard location
+CLAUDE_HOME_DIR="$HOME/.local/share/claude-home"
+
+# Check if image exists
+if ! docker images | grep -q "claude-docker"; then
+    echo "Error: claude-docker image not found. Please run 'make build'"
+    exit 1
+fi
+
+# Create claude-home directory if it doesn't exist
+mkdir -p "$CLAUDE_HOME_DIR"
+
+# Run docker with the current directory mounted to its actual path
+docker run -it --rm \
+    -v "$CLAUDE_HOME_DIR:/home/claude-user" \
+    -v "$CURRENT_DIR:$CURRENT_DIR" \
+    -v "/var/run/docker.sock:/var/run/docker.sock" \
+    -v "$HOME/.docker:/home/claude-user/.docker:ro" \
+    -w "$CURRENT_DIR" \
+    --group-add $(stat -c '%g' /var/run/docker.sock) \
+    --network host \
+    claude-docker:latest "$@"
