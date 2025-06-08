@@ -47,6 +47,7 @@ RUN git clone https://github.com/shannonlal/mcp-postman.git /opt/mcp-postman \
 
 # Create necessary directories
 RUN mkdir -p /home/claude-user/.config/claude-code \
+    && mkdir -p /home/claude-user/.docker \
     && chown -R claude-user:claude-user /home/claude-user
 
 # Switch to non-root user
