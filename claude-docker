@@ -15,6 +15,12 @@ fi
 # Create claude-home directory if it doesn't exist
 mkdir -p "$CLAUDE_HOME_DIR"
 
+# Create the claude-node-modules volume if it doesn't exist
+if ! docker volume ls | grep -q "claude-node-modules"; then
+    echo "Creating claude-node-modules volume..."
+    docker volume create claude-node-modules
+fi
+
 # Run docker with the current directory mounted to its actual path
 docker run -it --rm \
     -v "$CLAUDE_HOME_DIR:/home/claude-user" \
@@ -22,6 +28,7 @@ docker run -it --rm \
     -v "/var/run/docker.sock:/var/run/docker.sock" \
     -v "$HOME/.docker:/home/claude-user/.docker" \
     -v "$HOME/.ssh:/home/claude-user/.ssh:ro" \
+    -v "claude-node-modules:/opt/claude-node-modules" \
     -w "$CURRENT_DIR" \
     --group-add $(stat -c '%g' /var/run/docker.sock) \
     --network host \

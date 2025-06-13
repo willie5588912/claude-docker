@@ -4,11 +4,11 @@ A Docker-based setup for running Claude CLI with multi-account support and MCP s
 
 ## Features
 
-- 🐳 Run Claude in an isolated Docker environment
-- 👥 Easy account switching by using different home directories
-- 🔧 Pre-installed MCP servers (GitHub, Atlassian, Postman, Puppeteer, LINE Bot)
-- 📁 Preserves project structure and chat history
-- 🔒 Keeps sensitive configurations separate from project files
+- Run Claude in an isolated Docker environment
+- Easy account switching by using different home directories
+- Pre-installed MCP servers (GitHub, Atlassian, Postman, Puppeteer, LINE Bot)
+- Preserves project structure and chat history
+- Keeps sensitive configurations separate from project files
 
 ## Prerequisites
 
@@ -58,6 +58,20 @@ claude-docker -c
 claude-docker --model claude-3-opus --no-stream
 ```
 
+## Updating Claude CLI
+
+To update Claude CLI to the latest version without rebuilding the Docker image:
+
+```bash
+# Simple update command
+update-claude
+
+# Or using make
+make update-claude
+```
+
+This will update Claude CLI in seconds instead of rebuilding the entire Docker image.
+
 ## Configuration
 
 ### MCP Servers
@@ -85,12 +99,14 @@ User-specific settings and chat history are stored in `~/.local/share/claude-hom
 
 ## How It Works
 
-1. **Docker Image**: Contains Claude CLI and all necessary MCP servers
-2. **Volume Mounts**: 
+1. **Docker Image**: Contains base system and MCP servers
+2. **Claude CLI**: Installed dynamically in a persistent Docker volume for easy updates
+3. **Volume Mounts**: 
    - Current directory → Same path in container (preserves project structure)
    - `~/.local/share/claude-home` → `/home/claude-user` (user settings)
+   - `claude-node-modules` → `/opt/claude-node-modules` (Claude CLI installation)
    - Docker socket → Allows MCP servers to run Docker containers
-3. **Permissions**: Automatically handles Docker socket permissions for MCP servers
+4. **Permissions**: Automatically handles Docker socket permissions for MCP servers
 
 ## Troubleshooting
 
@@ -116,7 +132,9 @@ Check that your `.mcp.json` file:
 ```
 claude-docker/
 ├── Dockerfile          # Docker image definition
+├── docker-entrypoint.sh # Entrypoint script for Claude CLI management
 ├── claude-docker       # Shell script wrapper
+├── update-claude       # Script to update Claude CLI
 ├── Makefile           # Build and install automation
 ├── .gitignore         # Excludes sensitive files
 └── README.md          # This file

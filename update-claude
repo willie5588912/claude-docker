@@ -1,0 +1,30 @@
+#!/bin/bash
+
+echo "Updating Claude CLI to latest version..."
+
+# Check if docker is available
+if ! command -v docker &> /dev/null; then
+    echo "Error: Docker is not installed or not in PATH"
+    exit 1
+fi
+
+# Create volume if it doesn't exist
+if ! docker volume ls | grep -q "claude-node-modules"; then
+    echo "Creating claude-node-modules volume..."
+    docker volume create claude-node-modules
+fi
+
+# Update Claude CLI
+echo "Installing/updating Claude CLI..."
+docker run -it --rm \
+    -v claude-node-modules:/opt/claude-node-modules \
+    node:20 \
+    npm install -g --prefix /opt/claude-node-modules @anthropic-ai/claude-code@latest
+
+if [ $? -eq 0 ]; then
+    echo "✅ Claude CLI updated successfully!"
+    echo "Next time you run 'claude-docker', it will use the updated version."
+else
+    echo "❌ Failed to update Claude CLI"
+    exit 1
+fi

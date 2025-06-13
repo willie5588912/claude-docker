@@ -27,8 +27,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install pnpm (required for mcp-postman)
 RUN npm install -g pnpm
 
-# Install Claude CLI
-RUN npm install -g @anthropic-ai/claude-code
+# Claude CLI will be installed via entrypoint script in volume
 
 # Pre-install MCP servers to avoid runtime downloads
 RUN npm install -g @modelcontextprotocol/server-puppeteer \
@@ -48,7 +47,12 @@ RUN git clone https://github.com/shannonlal/mcp-postman.git /opt/mcp-postman \
 # Create necessary directories
 RUN mkdir -p /home/claude-user/.config/claude-code \
     && mkdir -p /home/claude-user/.docker \
-    && chown -R claude-user:claude-user /home/claude-user
+    && mkdir -p /opt/claude-node-modules \
+    && chown -R claude-user:claude-user /home/claude-user /opt/claude-node-modules
+
+# Copy and set up the entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Switch to non-root user
 USER claude-user
@@ -56,7 +60,8 @@ WORKDIR /home/claude-user
 
 # Set up environment for Claude
 ENV HOME=/home/claude-user
-ENV PATH="/home/claude-user/.local/bin:${PATH}"
+ENV PATH="/opt/claude-node-modules/bin:/home/claude-user/.local/bin:${PATH}"
 
 # Entry point
-ENTRYPOINT ["claude"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["claude"]
