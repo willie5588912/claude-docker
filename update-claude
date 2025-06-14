@@ -14,17 +14,22 @@ if ! docker volume ls | grep -q "claude-node-modules"; then
     docker volume create claude-node-modules
 fi
 
+# Check if node:20-alpine image exists locally
+if ! docker images | grep -q "node.*20-alpine"; then
+    echo "First time setup: Pulling Node.js Docker image (this may take a minute)..."
+fi
+
 # Update Claude CLI
 echo "Installing/updating Claude CLI..."
-docker run -it --rm \
+docker run --rm \
     -v claude-node-modules:/opt/claude-node-modules \
-    node:20 \
+    node:20-alpine \
     npm install -g --prefix /opt/claude-node-modules @anthropic-ai/claude-code@latest
 
 if [ $? -eq 0 ]; then
-    echo "✅ Claude CLI updated successfully!"
+    echo "Claude CLI updated successfully!"
     echo "Next time you run 'claude-docker', it will use the updated version."
 else
-    echo "❌ Failed to update Claude CLI"
+    echo "Failed to update Claude CLI"
     exit 1
 fi
