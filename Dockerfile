@@ -27,6 +27,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install pnpm (required for mcp-postman)
 RUN npm install -g pnpm
 
+# Install Terraform
+RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list \
+    && apt-get update \
+    && apt-get install -y terraform \
+    && rm -rf /var/lib/apt/lists/*
+
 # Claude CLI will be installed via entrypoint script in volume
 
 # Pre-install MCP servers to avoid runtime downloads
@@ -64,4 +71,3 @@ ENV PATH="/opt/claude-node-modules/bin:/home/claude-user/.local/bin:${PATH}"
 
 # Entry point
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["claude"]

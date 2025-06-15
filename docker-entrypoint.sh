@@ -10,11 +10,5 @@ fi
 # Add claude to PATH
 export PATH="/opt/claude-node-modules/bin:$PATH"
 
-# Execute Claude with the provided arguments
-if [ $# -eq 0 ]; then
-    # No arguments provided, run claude with no args
-    exec claude
-else
-    # Arguments provided, run claude with those arguments
-    exec claude "$@"
-fi
+# Always execute claude with any provided arguments
+exec claude "$@"
