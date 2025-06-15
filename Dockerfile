@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     sudo \
     docker.io \
     nano \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20.x (required for npx and MCP servers)
@@ -33,6 +34,12 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /
     && apt-get update \
     && apt-get install -y terraform \
     && rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI v2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf aws awscliv2.zip
 
 # Claude CLI will be installed via entrypoint script in volume
 
