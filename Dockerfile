@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install -y \
     docker.io \
     nano \
     unzip \
+    jq \
+    mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20.x (required for npx and MCP servers)
@@ -25,8 +27,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm (required for mcp-postman)
-RUN npm install -g pnpm
+# Install pnpm and newman globally
+RUN npm install -g pnpm newman
 
 # Install Terraform
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg \
